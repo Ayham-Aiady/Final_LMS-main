@@ -17,6 +17,7 @@ import QuizRoutes from './routes/quizRoutes.js';
 import questionRoutes from './routes/questionRoutes.js';
 import assignmentRoutes from './routes/assignmentRoutes.js';
 import submissionRoutes from './routes/submissionRoutes.js';
+import progressRoutes from './routes/progressRoutes.js';
 
 
 import { notFound, errorHandler } from './middleware/error.js';
@@ -75,6 +76,7 @@ app.use('/api/quizzes',QuizRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/submissions', submissionRoutes);
+app.use('/api/progress', progressRoutes);
 
 
 
