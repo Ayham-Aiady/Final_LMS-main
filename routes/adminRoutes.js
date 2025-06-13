@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { authenticate, authorize } from '../middleware/auth.js';
 import AdminController from '../controllers/adminController.js';
-import CourseController from '../controllers/courseController.js';
 
 const router = Router();
 
@@ -24,6 +23,8 @@ router.delete('/users/:id', AdminController.deleteUser);
 //admin dashbourd summary
 router.get('/dashboard/summary', AdminController.getDashboardSummary);
 
+// Course popularity report
+router.get('/reports/course-popularity', AdminController.getCoursePopularity);
 
 
 
