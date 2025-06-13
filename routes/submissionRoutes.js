@@ -18,4 +18,6 @@ router.put('/update/:id', submissionController.updateSubmission);
 // DELETE /api/submissions/delete/:id
 router.delete('/delete/:id', submissionController.deleteSubmission);
 
+router.patch('/grade/:id', submissionController.gradeSubmission);
+
 export default router;
