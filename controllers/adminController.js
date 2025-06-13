@@ -102,7 +102,29 @@ const AdminController = {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+},
+async getCoursePopularity(req, res) {
+  try {
+    const result = await query(`
+      SELECT 
+        c.id,
+        c.title,
+        COUNT(e.id) AS enrollment_count
+      FROM courses c
+      LEFT JOIN enrollments e ON c.id = e.course_id
+      GROUP BY c.id, c.title
+      ORDER BY enrollment_count DESC;
+    `);
+
+    res.json({
+      success: true,
+      data: result.rows
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 }
+
 
 };
 

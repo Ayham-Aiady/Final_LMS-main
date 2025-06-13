@@ -18,7 +18,7 @@ import questionRoutes from './routes/questionRoutes.js';
 import assignmentRoutes from './routes/assignmentRoutes.js';
 import submissionRoutes from './routes/submissionRoutes.js';
 import progressRoutes from './routes/progressRoutes.js';
-
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 import { notFound, errorHandler } from './middleware/error.js';
 import './config/db.js';
@@ -47,12 +47,13 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-  secure: process.env.NODE_ENV === 'production',
-  httpOnly: true,
-  sameSite: 'lax'
-}
- // true only with HTTPS
+    secure: process.env.NODE_ENV === 'production', // ✅ secure only in production
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // optional: 1-day session
+  }
 }));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -76,8 +77,8 @@ app.use('/api/quizzes',QuizRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/submissions', submissionRoutes);
-app.use('/api/progress', progressRoutes);
-
+app.use('/api/progress',progressRoutes);
+app.use('/api/uploads', uploadRoutes);
 
 
 // Health check
