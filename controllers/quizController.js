@@ -1,4 +1,5 @@
 import quizModel from '../models/quizModel.js';
+import { pool } from '../config/db.js';
 
 const quizController = {
   async getAllQuizzes(req, res) {
@@ -71,7 +72,53 @@ async updateQuiz(req, res) {
       console.error('Error deleting quiz:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
+  },
+
+  async submitQuiz(req, res) {
+  try {
+    const { quiz_id, answers } = req.body;
+    const user_id = req.user.id; // Use authenticated user
+
+    // 1. Prevent multiple attempts
+    const check = await pool.query(
+      'SELECT * FROM quiz_grades WHERE quiz_id = $1 AND user_id = $2',
+      [quiz_id, user_id]
+    );
+    if (check.rows.length > 0) {
+      return res.status(400).json({ message: 'Quiz already submitted' });
+    }
+
+    // 2. Fetch correct answers
+    const questionRes = await pool.query(
+      'SELECT id, correct_answer FROM questions WHERE quizz_id = $1',
+      [quiz_id]
+    );
+    const questions = questionRes.rows;
+
+    // 3. Grade quiz
+    let score = 0;
+    questions.forEach((q) => {
+      if (answers[q.id] && answers[q.id] === q.correct_answer) {
+        score++;
+      }
+    });
+
+    // 4. Save grade
+    await pool.query(
+      `INSERT INTO quiz_grades (quiz_id, user_id, grade) VALUES ($1, $2, $3)`,
+      [quiz_id, user_id, score]
+    );
+
+    res.status(200).json({
+      message: 'Quiz submitted',
+      score,
+      total: questions.length,
+    });
+  } catch (error) {
+    console.error('Error submitting quiz:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
+}
 };
 
 export default quizController;

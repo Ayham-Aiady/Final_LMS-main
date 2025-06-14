@@ -3,6 +3,7 @@ import UserModel from '../models/userModel.js';
 
 export const authenticate = async (req, res, next) => {
   try {
+    
     // Debug logging
     console.log('Authorization Header:', req.headers['authorization']);
     
@@ -30,6 +31,7 @@ export const authenticate = async (req, res, next) => {
       error.statusCode = 401;
       throw error;
     }
+console.log('Decoded JWT:', decoded);
 
     const user = await UserModel.findById(decoded.id);
 

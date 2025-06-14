@@ -1,5 +1,6 @@
 import express from 'express';
 import quizController from '../controllers/quizController.js';
+import { authenticate, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -17,5 +18,10 @@ router.put('/update/:id', quizController.updateQuiz);
 
 // DELETE /api/quizzes/delete/:id
 router.delete('/delete/:id', quizController.deleteQuiz);
+
+
+// Only students should submit quizzes
+router.post('/submit', authenticate, authorize(['student']), quizController.submitQuiz);
+
 
 export default router;
