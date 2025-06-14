@@ -50,11 +50,13 @@ const UserModel = {
   },
 
 async findById(id) {
+  console.log('Searching for user ID:', id); // Log the input ID
   const { rows } = await query(
     `SELECT id, email, name, oauth_provider, oauth_id, role, avatar, password_hash, is_active 
      FROM users WHERE id = $1 AND is_active = true`,
     [id]
   );
+  console.log('Query result:', rows[0]); // Log the found user
   return rows[0];
 },
 
