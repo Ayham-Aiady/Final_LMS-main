@@ -20,6 +20,11 @@ const ModuleModel = {
     return rows[0];
   },
 
+  async findByCourseId(courseId) {
+  const { rows } = await query('SELECT * FROM modules WHERE course_id = $1', [courseId]);
+  return rows;
+},
+
   async create({ course_id, title, description, order }) {
     const sql = `
       INSERT INTO public.modules (course_id, title, description, "order")

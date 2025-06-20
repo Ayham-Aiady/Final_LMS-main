@@ -22,6 +22,17 @@ const ModuleController = {
     }
   },
 
+  async getModulesByCourse(req, res) {
+    try {
+      const courseId = parseInt(req.params.courseId);
+      const modules = await ModuleModel.findByCourseId(courseId);
+      res.json(modules);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error fetching modules for course' });
+    }
+  },
+
   async createModule(req, res) {
     try {
       const newModule = await ModuleModel.create(req.body);

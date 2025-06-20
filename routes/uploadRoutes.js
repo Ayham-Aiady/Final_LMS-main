@@ -1,12 +1,14 @@
-import { Router } from "express";
-import {
-  deleteFile,
-  getFileById,
-  uploadFile,
-} from "../controllers/uploadController.js";
-const router = Router();
+import express from "express";
+import multer from "multer";
+import { uploadFile, getFileById, deleteFile } from "../controllers/uploadController.js";
 
-router.post("/upload", uploadFile);
+const router = express.Router();
+const storage = multer.memoryStorage(); // using memory storage for Cloudinary
+const upload = multer({ storage }); // ready to parse file
+
+// 👇 Apply multer middleware to the POST route
+router.post("/", upload.single("file"), uploadFile);
+
 router.get("/file/:id", getFileById);
 router.delete("/file/:id", deleteFile);
 

@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import session from 'express-session';
+import cookieParser from 'cookie-parser';
 import './config/passport.js';
 import passport from 'passport';
 import authRoutes from './routes/authRoutes.js';
@@ -27,7 +28,7 @@ import './config/db.js';
 const app = express();
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 mins
-  max: 100, // max requests per IP
+  max: 200, // max requests per IP
   message: 'Too many requests, please try again later',
 });
 
@@ -36,8 +37,9 @@ app.use(limiter);
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  // origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*',
+   origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT','patch', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   //allow credentials (cookies, authorization headers)
   credentials: true,
@@ -55,7 +57,7 @@ app.use(session({
   }
 }));
 
-
+app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -79,7 +81,7 @@ app.use('/api/questions', questionRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/progress',progressRoutes);
-app.use('/api/uploads', uploadRoutes);
+app.use('/api/upload', uploadRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 

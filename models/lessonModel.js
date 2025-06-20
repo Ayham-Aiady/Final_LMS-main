@@ -19,6 +19,12 @@ const LessonModel = {
     return rows[0];
   },
 
+  async findByModuleId(moduleId) {
+  const { rows } = await query('SELECT * FROM lessons WHERE module_id = $1', [moduleId]);
+  return rows;
+},
+
+
   // Retrieve all lessons
   async findAll() {
     const { rows } = await query('SELECT * FROM lessons ORDER BY created_at DESC');

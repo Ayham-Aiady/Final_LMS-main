@@ -12,17 +12,22 @@ router.get('/getall', CourseController.getAll);
 // GET /api/courses/get/:id
 router.get('/get/:id', CourseController.getById);
 
+// in routes/courseRoutes.js
+router.get('/byinstructor/:id', CourseController.getCoursesByInstructor);
+
+
 // PUT /api/courses/update/:id
 router.put('/update/:id', CourseController.update);
 
 // DELETE /api/courses/delete/:id
 router.delete('/delete/:id', CourseController.delete);
 // Course approval
-router.patch('/courses/:id/approval', CourseController.approveOrReject);
+// router.patch('/courses/:id/approval', CourseController.approveOrReject);
 
 //Show pending courses for admin review
-router.get('/courses/pending', CourseController.getPendingCourses);
+// router.get('/courses/pending', CourseController.getPendingCourses);
 
 //publish courses
-router.patch('/courses/:id/publish', CourseController.publishOrUnpublish);
+// router.patch('/courses/:id/publish', CourseController.publishOrUnpublish);
+//they moved to adminRoutes
 export default router;

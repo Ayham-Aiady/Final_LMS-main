@@ -3,12 +3,21 @@ import assignmentModel from '../models/assignmentModel.js';
 const assignmentController = {
   async createAssignment(req, res) {
     try {
-      const { lesson_id, title, description, deadline, max_score } = req.body;
+      const { lesson_id, title, description, deadline, max_score, file_url } = req.body;
+
       if (!lesson_id || !title) {
         return res.status(400).json({ message: 'lesson_id and title are required' });
       }
 
-      const assignment = await assignmentModel.create({ lesson_id, title, description, deadline, max_score });
+      const assignment = await assignmentModel.create({
+        lesson_id,
+        title,
+        description,
+        deadline,
+        max_score,
+        file_url
+      });
+
       res.status(201).json(assignment);
     } catch (error) {
       console.error('Error creating assignment:', error);
@@ -37,16 +46,31 @@ const assignmentController = {
     }
   },
 
+  async getByLessonId(req, res) {
+  try {
+    const lessonId = parseInt(req.params.lessonId);
+    const assignments = await assignmentModel.findByLessonId(lessonId);
+    res.json(assignments);
+  } catch (error) {
+    console.error('Error fetching assignments by lesson:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+},
+
+
   async updateAssignment(req, res) {
     try {
-      const { lesson_id, title, description, deadline, max_score } = req.body;
+      const { lesson_id, title, description, deadline, max_score, file_url } = req.body;
+
       const updated = await assignmentModel.update(req.params.id, {
         lesson_id,
         title,
         description,
         deadline,
-        max_score
+        max_score,
+        file_url
       });
+
       if (!updated) return res.status(404).json({ message: 'Assignment not found' });
       res.json(updated);
     } catch (error) {

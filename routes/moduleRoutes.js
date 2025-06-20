@@ -12,6 +12,8 @@ router.post('/create', ModuleController.createModule);
 // Get a single module by id
 router.get('/get/:id', ModuleController.getModuleById);
 
+router.get('/bycourse/:courseId', ModuleController.getModulesByCourse);
+
 // Update a module by id
 router.put('/update/:id', ModuleController.updateModule);
 

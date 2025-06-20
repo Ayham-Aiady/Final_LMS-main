@@ -12,6 +12,9 @@ router.get('/getall', submissionController.getAllSubmissions);
 // GET /api/submissions/get/:id
 router.get('/get/:id', submissionController.getSubmissionById);
 
+router.get('/byassignment/:assignmentId', submissionController.getByAssignmentId);
+
+
 // PUT /api/submissions/update/:id
 router.put('/update/:id', submissionController.updateSubmission);
 

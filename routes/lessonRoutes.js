@@ -9,6 +9,8 @@ router.post('/create', LessonController.create);
 // Route to get a lesson by its ID
 router.get('/get/:id', LessonController.getById);
 
+router.get('/bymodule/:moduleId', LessonController.getLessonsByModule);
+
 // Route to get all lessons
 router.get('/getall', LessonController.getAll);
 
