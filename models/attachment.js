@@ -2,20 +2,24 @@ import { pool } from "../config/db.js";
 
 export const createAttachment = async (attachmentDTO) => {
   try {
-    const { original_name, mime_type, size, public_id, secure_url, format } = attachmentDTO;
-    const query = `
-      INSERT INTO attachments (original_name, mime_type, size, public_id, secure_url, format)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING *
-    `;
-    const result = await pool.query(query, [
-      original_name,
-      mime_type,
-      size,
-      public_id,
-      secure_url,
-      format,
-    ]);
+    const { original_name, mime_type, size, public_id, secure_url, format, lesson_id } = attachmentDTO;
+
+  const query = `
+    INSERT INTO attachments (original_name, mime_type, size, public_id, secure_url, format, lesson_id)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING *
+  `;
+
+  const result = await pool.query(query, [
+    original_name,
+    mime_type,
+    size,
+    public_id,
+    secure_url,
+    format,
+    lesson_id,
+  ]);
+
     return result.rows[0];
   } catch (error) {
     console.error("Error creating attachment:", error);

@@ -32,6 +32,12 @@ const CourseModel = {
     return rows;
   },
 
+  async findByInstructorId(instructorId) {
+  const { rows } = await query('SELECT * FROM courses WHERE instructor_id = $1', [instructorId]);
+  return rows;
+},
+
+
   // Update course
   async update(courseId, { title, description, thumbnail_url }) {
     try {
@@ -59,9 +65,10 @@ const CourseModel = {
         [courseId]
       );
       return rows[0];
-    } catch (error) {
-      throw new Error('Failed to delete course');
-    }
+   } catch (error) {
+  console.error('❌ DB error during course deletion:', error);
+  throw new Error(error.message || 'Failed to delete course');
+}
   },
 
   async updateApprovalStatus(courseId, isApproved) {

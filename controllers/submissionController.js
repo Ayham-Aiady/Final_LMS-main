@@ -36,6 +36,18 @@ const submissionController = {
     }
   },
 
+  async getByAssignmentId(req, res) {
+  try {
+    const assignmentId = parseInt(req.params.assignmentId);
+    const subs = await submissionModel.findByAssignmentId(assignmentId);
+    res.json(subs);
+  } catch (error) {
+    console.error('Error fetching submissions by assignment:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+},
+
+
   async updateSubmission(req, res) {
     try {
       const { assignment_id, user_id, submission_url, grade, feedback } = req.body;

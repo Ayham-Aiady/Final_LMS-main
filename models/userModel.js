@@ -127,7 +127,87 @@ async findById(id) {
       'UPDATE users SET is_active = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
       [userId]
     );
+  },
+
+  async updateUserStatus(userId, isActive) {
+  const { rows } = await query(
+    'UPDATE users SET is_active = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, name, email, role, is_active',
+    [isActive, userId]
+  );
+
+  if (rows.length === 0) {
+    throw new Error('User not found or update failed');
   }
+
+  return rows[0];
+},
+
+
+async getAll({ limit, offset, search }) {
+  const values = [`%${search}%`, limit, offset];
+
+  const usersQuery = `
+    SELECT id, email, name, role, avatar, is_active
+    FROM users
+    WHERE name ILIKE $1 OR email ILIKE $1
+    ORDER BY created_at DESC
+    LIMIT $2 OFFSET $3
+  `;
+
+  const countQuery = `
+    SELECT COUNT(*) FROM users
+    WHERE name ILIKE $1 OR email ILIKE $1
+  `;
+
+  const [usersResult, countResult] = await Promise.all([
+    query(usersQuery, values),
+    query(countQuery, [values[0]])
+  ]);
+
+  return {
+    users: usersResult.rows,
+    total: parseInt(countResult.rows[0].count, 10),
+  };
+},
+
+async updateRole(userId, newRole) {
+  const { rows } = await query(
+    'UPDATE users SET role = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, name, email, role',
+    [newRole, userId]
+  );
+
+  if (rows.length === 0) {
+    throw new Error('User not found or update failed');
+  }
+
+  return rows[0];
+},
+createByAdmin({ name, email, password, role }) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUNDS));
+
+      const { rows } = await query(
+        `INSERT INTO users (name, email, password_hash, role, is_active)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id, name, email, role, is_active`,
+        [name, email, hashedPassword, role, true]
+      );
+
+      resolve(rows[0]);
+    } catch (error) {
+      if (error.code === '23505') {
+        reject(new Error('Email already exists'));
+      } else {
+        reject(error);
+      }
+    }
+  });
+}
+
+
+
+
 };
 
 export default UserModel;

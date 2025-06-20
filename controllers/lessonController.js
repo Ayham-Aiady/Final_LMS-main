@@ -22,6 +22,18 @@ const LessonController = {
     }
   },
 
+  async getLessonsByModule(req, res) {
+  try {
+    const moduleId = parseInt(req.params.moduleId);
+    const lessons = await LessonModel.findByModuleId(moduleId);
+    res.json(lessons);
+  } catch (err) {
+    console.error('Error fetching lessons by module:', err);
+    res.status(500).json({ message: 'Could not fetch lessons for this module' });
+  }
+},
+
+
   // Handle request to retrieve all lessons
   async getAll(req, res) {
     try {

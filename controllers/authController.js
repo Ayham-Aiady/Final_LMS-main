@@ -20,12 +20,13 @@ const AuthController = {
       const existingUser = await UserModel.findByEmail(email);
       if (existingUser) throw new Error("Email already in use");
 
-      const user = await UserModel.create({ email, password, name });
+      const user = await UserModel.create({ email, password, name});
+      const fullUser = await UserModel.findById(user.id); // includes role
       const token = UserModel.generateToken(user);
 
       // Set HTTP-only cookies for access & refresh tokens
-      const accessToken = generateToken({ id: user.id, email: user.email });
-      const refreshToken = generateRefreshToken({ id: user.id, email: user.email });
+      const accessToken = generateToken({ id: fullUser.id, email: fullUser.email ,role: fullUser.role});
+      const refreshToken = generateRefreshToken({ id: fullUser.id, email: fullUser.email ,role: fullUser.role});
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
@@ -45,11 +46,11 @@ const AuthController = {
         success: true,
         token,
         user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          createdAt: user.created_at,
+          id: fullUser.id,
+          name: fullUser.name,
+          email: fullUser.email,
+          role: fullUser.role,
+          createdAt: fullUser.created_at,
         },
       });
     } catch (error) {
@@ -97,6 +98,7 @@ const AuthController = {
           id: user.id,
           name: user.name,
           email: user.email,
+           role: user.role,
           avatar: user.avatar,
           oauth_provider: user.oauth_provider,
         },

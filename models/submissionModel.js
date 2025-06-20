@@ -20,6 +20,12 @@ const submissionModel = {
     return result.rows[0];
   },
 
+  async findByAssignmentId(assignmentId) {
+  const { rows } = await query('SELECT * FROM submissions WHERE assignment_id = $1', [assignmentId]);
+  return rows;
+},
+
+
   async update(id, { assignment_id, user_id, submission_url, grade, feedback }) {
     const result = await query(
       `UPDATE submissions

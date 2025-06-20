@@ -15,15 +15,18 @@ export const uploadFile = async (req, res) => {
     const result = await uploadToCloudinary(req.file.buffer, {
       resource_type: "auto",
     });
+const { lesson_id } = req.body; // Make sure lesson_id is sent from frontend
 
-    const attachmentDTO = {
-      original_name: req.file.originalname,
-      mime_type: req.file.mimetype,
-      size: req.file.size,
-      public_id: result.public_id,
-      secure_url: result.secure_url,
-      format: result.format,
-    };
+const attachmentDTO = {
+  original_name: req.file.originalname,
+  mime_type: req.file.mimetype,
+  size: req.file.size,
+  public_id: result.public_id,
+  secure_url: result.secure_url,
+  format: result.format,
+  lesson_id: lesson_id ? parseInt(lesson_id) : null, // Ensure it's a number
+};
+
 
     const attachment = await createAttachment(attachmentDTO);
     return res.status(201).json({ attachment }); 

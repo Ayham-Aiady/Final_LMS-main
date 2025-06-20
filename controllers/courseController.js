@@ -49,6 +49,18 @@ const CourseController = {
     }
   },
 
+  async getCoursesByInstructor(req, res) {
+  try {
+    const instructorId = parseInt(req.params.id);
+    const courses = await CourseModel.findByInstructorId(instructorId);
+    res.json(courses);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching instructor courses' });
+  }
+},
+
+
   // Update course
   async update(req, res) {
     try {

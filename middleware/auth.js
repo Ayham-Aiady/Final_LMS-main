@@ -6,11 +6,14 @@ export const authenticate = async (req, res, next) => {
     
     // Debug logging
     console.log('Authorization Header:', req.headers['authorization']);
-    
+     const cookieToken = req.cookies?.accessToken;
     const authHeader = req.headers['authorization'];
-    const token = authHeader?.split(' ')[1];
+    const headerToken = authHeader?.split(' ')[1];
+    const token = cookieToken || headerToken;
     console.log('Extracted Token:', token); // Debug log
-
+    console.log('Token from cookie:', cookieToken);
+    console.log('Token from header:', headerToken);
+    console.log('Token used for auth:', token);
     if (!token) {
       const error = new Error('Authentication token missing');
       error.statusCode = 401;

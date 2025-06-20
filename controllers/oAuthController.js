@@ -3,6 +3,7 @@ import { generateToken, generateRefreshToken } from '../utils/jwt.js';
 import { sanitizeUser, createResponse } from '../utils/helpers.js';
 import jwt from 'jsonwebtoken'
 
+
 // Start Google OAuth flow
 export const googleAuth = passport.authenticate('google', {
   scope: ['profile', 'email']
@@ -29,7 +30,13 @@ export const googleCallback = (req, res, next) => {
         }
         
         // Generate JWT tokens
-        const tokenPayload = { id: user.id, email: user.email };
+        const tokenPayload = {
+           id: user.id,
+           email: user.email,
+           role: user.role,              
+           name: user.name,              
+           avatar: user.avatar || null,  
+           provider: user.oauth_provider };
         const accessToken = generateToken(tokenPayload);
         const refreshToken = generateRefreshToken(tokenPayload);
         
