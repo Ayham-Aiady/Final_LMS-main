@@ -15,6 +15,9 @@ router.get('/get/:id', CourseController.getById);
 // in routes/courseRoutes.js
 router.get('/byinstructor/:id', CourseController.getCoursesByInstructor);
 
+router.get('/available/:user_id', CourseController.getAvailableCourses);
+
+router.get('/details/:id', CourseController.getCourseWithInstructor);
 
 // PUT /api/courses/update/:id
 router.put('/update/:id', CourseController.update);
