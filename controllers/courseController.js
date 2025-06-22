@@ -60,6 +60,55 @@ const CourseController = {
   }
 },
 
+async getAvailableCourses(req, res) {
+  try {
+    const user_id = parseInt(req.params.user_id);
+    const search = req.query.search || '';
+
+    if (isNaN(user_id)) {
+      return res.status(400).json({ message: 'Invalid student ID' });
+    }
+
+    const courses = await CourseModel.findAvailableForStudent(user_id, search);
+    res.status(200).json(courses);
+  } catch (error) {
+    console.error('Error fetching available courses:', error);
+    res.status(500).json({ message: 'Failed to fetch available courses', error: error.message });
+  }
+},
+
+async getCourseWithInstructor(req, res) {
+  try {
+    const courseId = parseInt(req.params.id);
+    console.log("🔍 Requesting course with instructor, ID:", courseId);
+
+    const course = await CourseModel.findByIdWithInstructor(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    const [modules, lessonCount] = await Promise.all([
+      CourseModel.getModulesWithLessonCounts(courseId),
+      CourseModel.countLessonsByCourse(courseId)
+    ]);
+
+    const moduleCount = modules.length;
+
+    res.json({
+      ...course,
+      modules,
+      moduleCount,
+      lessonCount
+    });
+  } catch (err) {
+    console.error('🔥 Error in getCourseWithInstructor:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+},
+
+
+
+
 
   // Update course
   async update(req, res) {

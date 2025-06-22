@@ -37,6 +37,102 @@ const CourseModel = {
   return rows;
 },
 
+// findAvailableForStudent: async function (user_id, search = '') {
+//   const sql = `
+//     SELECT * FROM courses
+//     WHERE is_published = TRUE
+//       AND is_approved = TRUE
+//       AND id NOT IN (
+//         SELECT course_id FROM enrollments WHERE user_id = $1
+//       )
+//       AND (
+//         title ILIKE $2 OR description ILIKE $2
+//       )
+//     ORDER BY created_at DESC;
+//   `;
+//   const values = [user_id, `%${search}%`];
+//   const { rows } = await query(sql, values);
+//   return rows;
+// },
+async findAvailableForStudent(user_id, search = '', limit = 10, offset = 0) {
+  const sql = `
+    SELECT * FROM courses
+    WHERE is_published = TRUE
+      AND is_approved = TRUE
+      AND id NOT IN (
+        SELECT course_id FROM enrollments WHERE user_id = $1
+      )
+      AND (
+        title ILIKE $2 OR description ILIKE $2
+      )
+    ORDER BY created_at DESC
+    LIMIT $3 OFFSET $4;
+  `;
+  const values = [user_id, `%${search}%`, limit, offset];
+  const { rows } = await query(sql, values);
+  return rows;
+},
+
+async findByIdWithInstructor(courseId) {
+  try {
+    const { rows } = await query(
+      `
+      SELECT 
+        c.*, 
+        u.name AS instructor_name
+      FROM courses c
+      LEFT JOIN users u ON c.instructor_id = u.id
+      WHERE c.id = $1
+      `,
+      [courseId]
+    );
+
+    const course = rows[0];
+    if (!course) return null;
+
+    return {
+      ...course,
+      instructor: {
+        id: course.instructor_id,
+        name: course.instructor_name || 'Unknown Instructor'
+      }
+    };
+  } catch (err) {
+    console.error('🔥 DB Error in findByIdWithInstructor:', err);
+    throw new Error('Failed to fetch course with instructor');
+  }
+},
+
+async countLessonsByCourse(courseId) {
+  const { rows } = await query(`
+    SELECT COUNT(*) AS lesson_count
+    FROM lessons l
+    JOIN modules m ON l.module_id = m.id
+    WHERE m.course_id = $1
+  `, [courseId]);
+
+  return parseInt(rows[0]?.lesson_count || 0);
+},
+
+async getModulesWithLessonCounts(courseId) {
+  const { rows } = await query(`
+    SELECT 
+      m.*, 
+      COUNT(l.id) AS lesson_count
+    FROM modules m
+    LEFT JOIN lessons l ON l.module_id = m.id
+    WHERE m.course_id = $1
+    GROUP BY m.id
+    ORDER BY m."order"
+  `, [courseId]);
+
+  return rows.map(m => ({
+    ...m,
+    lesson_count: parseInt(m.lesson_count, 10)
+  }));
+},
+
+
 
   // Update course
   async update(courseId, { title, description, thumbnail_url }) {
