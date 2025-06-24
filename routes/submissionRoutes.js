@@ -23,4 +23,9 @@ router.delete('/delete/:id', submissionController.deleteSubmission);
 
 router.patch('/grade/:id', submissionController.gradeSubmission);
 
+
+router.get('/pending/:userId', submissionController.getPendingByUser);
+
+
+
 export default router;

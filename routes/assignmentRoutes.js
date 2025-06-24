@@ -12,4 +12,8 @@ router.get('/bylesson/:lessonId', assignmentController.getByLessonId);
 router.put('/update/:id', assignmentController.updateAssignment);
 router.delete('/delete/:id', assignmentController.deleteAssignment);
 
+router.get('/pending/user/:userId', assignmentController.getPendingAssignmentsByUser);
+
+
+
 export default router;

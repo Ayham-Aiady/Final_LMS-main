@@ -10,6 +10,7 @@ const ProgressController = {
 
     try {
       await ProgressModel.completeLesson(enrollmentId, lessonId);
+       await ProgressModel.calculateProgress(enrollmentId);
       res.status(200).json({ message: 'Lesson marked as completed' });
     } catch (error) {
       console.error('Error marking lesson completed:', error);
@@ -31,7 +32,32 @@ const ProgressController = {
       console.error('Error fetching progress:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
+  },
+
+  async getCompletedLessons(req, res) {
+  const { enrollmentId } = req.params;
+  try {
+    const result = await ProgressModel.getCompletedLessons(enrollmentId);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error fetching completed lessons:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
+},
+
+async getCompletedLessonsByUser(req, res) {
+  const { userId } = req.params;
+  try {
+    const result = await ProgressModel.getCompletedLessonsByUser(userId);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error('Error getting completed lessons:', err);
+    res.status(500).json({ error: 'Failed to fetch completed lessons' });
+  }
+}
+
+
+
 };
 
 export default ProgressController;

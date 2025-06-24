@@ -55,3 +55,14 @@ export const deleteAttachment = async (id) => {
     throw error;
   }
 };
+
+export const getAttachmentByLessonId = async (lessonId) => {
+  try {
+    const query = `SELECT * FROM attachments WHERE lesson_id = $1 LIMIT 1`;
+    const result = await pool.query(query, [lessonId]);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error fetching attachment by lesson_id:", error);
+    throw error;
+  }
+};

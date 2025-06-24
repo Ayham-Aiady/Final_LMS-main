@@ -46,7 +46,37 @@ const assignmentModel = {
   async delete(id) {
     const result = await query(`DELETE FROM assignments WHERE id = $1 RETURNING *`, [id]);
     return result.rows[0];
-  }
+  },
+
+async getPendingAssignmentsByUser(userId) {
+  const result = await query(
+    `
+    SELECT a.id AS assignment_id, a.title AS assignment_title, a.deadline
+    FROM assignments a
+    WHERE a.id NOT IN (
+      SELECT assignment_id
+      FROM submissions
+      WHERE user_id = $1
+    )
+    AND a.lesson_id IN (
+      SELECT l.id
+      FROM lessons l
+      JOIN modules m ON l.module_id = m.id
+      JOIN courses c ON m.course_id = c.id
+      JOIN enrollments e ON e.course_id = c.id
+      WHERE e.user_id = $1
+    )
+    ORDER BY a.deadline ASC
+    `,
+    [userId]
+  );
+  return result.rows;
+}
+
+
+
+
+
 };
 
 export default assignmentModel;

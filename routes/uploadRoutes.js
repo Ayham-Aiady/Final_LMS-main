@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { uploadFile, getFileById, deleteFile } from "../controllers/uploadController.js";
+import { uploadFile, getFileById, deleteFile,getFileByLessonId } from "../controllers/uploadController.js";
 
 const router = express.Router();
 const storage = multer.memoryStorage(); // using memory storage for Cloudinary
@@ -11,5 +11,7 @@ router.post("/", upload.single("file"), uploadFile);
 
 router.get("/file/:id", getFileById);
 router.delete("/file/:id", deleteFile);
+
+router.get("/lesson/:lessonId", getFileByLessonId);
 
 export default router;
