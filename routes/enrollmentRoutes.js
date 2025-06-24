@@ -1,5 +1,6 @@
 import express from 'express';
 import EnrollmentController from '../controllers/enrollmentController.js';
+import { authenticate} from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -11,6 +12,10 @@ router.get('/getall', EnrollmentController.getAll);
 
 // Get enrollment by ID
 router.get('/get/:id', EnrollmentController.getById);
+
+router.get('/user/:user_id/with-courses', EnrollmentController.getCoursesByUserId);
+
+router.get('/course/:courseId', authenticate, EnrollmentController.getEnrollmentByCourseForAuthenticatedUser);
 
 // Update enrollment by ID
 router.put('/update/:id', EnrollmentController.update);
@@ -26,5 +31,11 @@ router.get('/user/:user_id', EnrollmentController.getByUserId);
 
 // Get enrollments by course ID
 router.get('/course/:course_id', EnrollmentController.getByCourseId);
+
+
+router.post('/last-viewed', authenticate, EnrollmentController.updateLastViewedLesson);
+
+router.get('/dashboard-overview/:user_id', EnrollmentController.getDashboardOverview);
+
 
 export default router;

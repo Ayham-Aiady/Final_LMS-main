@@ -55,7 +55,21 @@ async updateGrade(id, grade, feedback) {
     [grade, feedback || null, id]
   );
   return result.rows[0];
+},
+
+async getPendingByUser(userId) {
+  const result = await query(
+    `
+    SELECT s.*, a.title AS assignment_title, a.deadline
+    FROM submissions s
+    JOIN assignments a ON s.assignment_id = a.id
+    WHERE s.user_id = $1 AND s.submission_url IS NULL
+    `,
+    [userId]
+  );
+  return result.rows;
 }
+
 
 };
 

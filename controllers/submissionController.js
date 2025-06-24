@@ -97,7 +97,20 @@ async gradeSubmission(req, res) {
     console.error('Error grading submission:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
+},
+
+async getPendingByUser(req, res) {
+  const { userId } = req.params;
+  try {
+    const pending = await submissionModel.getPendingByUser(userId);
+    res.json(pending);
+  } catch (err) {
+    console.error('Error fetching pending submissions:', err);
+    res.status(500).json({ error: 'Failed to fetch pending submissions' });
+  }
 }
+
+
 
 };
 

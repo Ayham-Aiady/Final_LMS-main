@@ -64,7 +64,33 @@ const ProgressModel = {
 
     // Return progress summary
     return { total, completed, progress };
-  }
+  },
+
+
+  async getCompletedLessons(enrollmentId) {
+  const result = await query(
+    `
+    SELECT lesson_id FROM lesson_progress
+    WHERE enrollment_id = $1 AND is_completed = TRUE
+    `,
+    [enrollmentId]
+  );
+  return result.rows.map(row => row.lesson_id);
+},
+
+async getCompletedLessonsByUser(userId) {
+  const result = await query(
+    `
+    SELECT COUNT(*) FROM lesson_progress lp
+    JOIN enrollments e ON lp.enrollment_id = e.id
+    WHERE lp.is_completed = TRUE AND e.user_id = $1
+    `,
+    [userId]
+  );
+  return { count: parseInt(result.rows[0].count, 10) };
+}
+
+
 };
 
 export default ProgressModel;

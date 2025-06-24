@@ -88,7 +88,23 @@ const assignmentController = {
       console.error('Error deleting assignment:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
-  }
+  },
+
+  async getPendingAssignmentsByUser(req, res) {
+    try {
+      const { userId } = req.params;
+      const pendingAssignments = await assignmentModel.getPendingAssignmentsByUser(userId);
+      console.log('Pending Assignments →', pendingAssignments);
+      res.json(pendingAssignments);
+      
+
+    } catch (error) {
+      console.error('Error fetching pending assignments:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  },
+
+  
 };
 
 export default assignmentController;
